@@ -1,0 +1,121 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <limits> // Necessário para usar o numeric_limits do seu código
+
+using namespace std;
+
+typedef struct {
+    string placa;
+    string cor;
+    string horaEntrada;
+} Veiculo;
+
+int main() {
+    vector<Veiculo> garagem; 
+    int opcao;
+    string placa, cor, horaEntrada; 
+    
+    do {
+        cout << "\n=== Menu de opcoes ===\n";
+        cout << "1 - Adicionar veiculo\n";
+        cout << "2 - Listar veiculos\n";
+        cout << "3 - Registrar saida do veiculo (Calcular Tempo)\n"; // NOVA OPÇÃO
+        cout << "0 - Sair\n";
+        cout << "Escolha uma opcao: ";
+        cin >> opcao;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+
+        switch (opcao) {
+            case 1:
+                cout << "Digite a placa do veiculo: ";
+                getline(cin, placa);
+                cout << "Digite a cor do veiculo: ";
+                getline(cin, cor);
+                cout << "Digite a hora de entrada [hh:mm]: ";
+                getline(cin, horaEntrada);    
+
+                garagem.push_back({placa, cor, horaEntrada});
+                cout << "Veiculo adicionado com sucesso!\n";
+                break;
+
+            case 2:
+                cout << "\n--- Veiculos na garagem ---\n";
+                if (garagem.empty()) {
+                    cout << "A garagem esta vazia.\n";
+                }
+                for (int i = 0; i < garagem.size(); i++) {
+                    cout << "Placa: " << garagem[i].placa << " | Cor: " << garagem[i].cor << " | Entrada: " << garagem[i].horaEntrada << endl;
+                }
+                break;
+
+            case 3: { //  SAÍDA do carro (Usamos chaves aqui dentro do case para criar variáveis locais)
+                string placaSaida, horaSaida;
+                bool achou = false;
+
+                cout << "Digite a placa do veiculo que esta saindo: ";
+                getline(cin, placaSaida);
+
+                // Procurando o carro na garagem
+                for (int i = 0; i < garagem.size(); i++) {
+                    if (garagem[i].placa == placaSaida) {
+                        achou = true;
+
+                        cout << "Veiculo encontrado! Horario de entrada: " << garagem[i].horaEntrada << "\n";
+                        cout << "Digite a hora de saida [hh:mm]: ";
+                        getline(cin, horaSaida);
+
+                        // --- LOGICA DA CONVERSÃO DE TEXTO [hh:mm] PARA MINUTOS ---
+                        // Pegamos os 2 primeiros caracteres (horas) e os 2 ultimos (minutos)
+                        // garagem[i].horaEntrada.substr(0, 2) pega o "hh"
+                        // garagem[i].horaEntrada.substr(3, 2) pega o "mm"
+                        
+                        int hEntrada = stoi(garagem[i].horaEntrada.substr(0, 2));
+                        int mEntrada = stoi(garagem[i].horaEntrada.substr(3, 2));
+                        int entradaEmMinutos = (hEntrada * 60) + mEntrada;
+
+                        int hSaida = stoi(horaSaida.substr(0, 2));
+                        int mSaida = stoi(horaSaida.substr(3, 2));
+                        int saidaEmMinutos = (hSaida * 60) + mSaida;
+
+                        // Calculando o tempo que ficou estacionado
+                        int tempoPermanencia = saidaEmMinutos - entradaEmMinutos;
+
+                        // Se a pessoa saiu no dia seguinte, tratamos o valor negativo
+                        if (tempoPermanencia < 0) {
+                            tempoPermanencia += 24 * 60; 
+                        }
+
+                        // --- EXIBINDO OS RESULTADOS EXIGIDOS ---
+                        cout << "\n======================================\n";
+                        cout << "RELATORIO DE SAIDA (Placa: " << placaSaida << ")\n";
+                        cout << "Hora de Entrada convertida: " << entradaEmMinutos << " minutos do dia.\n";
+                        cout << "Hora de Saida convertida: " << saidaEmMinutos << " minutos do dia.\n";
+                        cout << "Tempo de Permanencia: " << tempoPermanencia << " minutos.\n";
+                        cout << "Convertendo de volta: " << (tempoPermanencia / 60) << "h e " << (tempoPermanencia % 60) << "min.\n";
+                        cout << "======================================\n";
+
+                        // Removendo o veículo da garagem já que ele saiu
+                        // O comando .erase remove um item do vetor baseado na posição 'i'
+                        garagem.erase(garagem.begin() + i);
+                        break; 
+                    }
+                }
+
+                if (!achou) {
+                    cout << "Erro: Veiculo com a placa " << placaSaida << " nao foi encontrado na garagem.\n";
+                }
+                break;
+            }
+
+            case 0:
+                cout << "Saindo do programa.\n";
+                break;
+            default:
+                cout << "Opcao invalida. Tente novamente.\n";
+        }
+
+    } while (opcao != 0);
+    
+    return 0; // Mudado para 0 (sucesso padrao no C++)
+}
