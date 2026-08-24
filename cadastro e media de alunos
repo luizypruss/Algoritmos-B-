@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 5  // quantidade de alunos
+
+struct Aluno {
+    char nome[50];
+    int matricula;
+    float nota;
+};
+
+// declaração das funções que vamos usar
+void cadastrarAlunos(struct Aluno turma[], int n);
+float calcularMedia(struct Aluno turma[], int n);
+int buscarMatricula(struct Aluno turma[], int n, int matriculaBuscada);
+void salvarArquivo(struct Aluno turma[], int n);
+void lerArquivo(struct Aluno turma[], int n);
+
+int main() {
+    struct Aluno turma[MAX];
+    int opcao;
+
+    do {
+        system("cls");
+        printf("MENU PRINCIPAL\n");
+        printf("1 - Cadastrar aluno\n");
+        printf("2 - Media das notas\n");
+        printf("3 - Buscar matricula\n");
+        printf("4 - Salvar em arquivo de texto\n");
+        printf("5 - Ler arquivo de texto\n");
+        printf("6 - Sair\n");
+        printf("Opcao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                cadastrarAlunos(turma, MAX);
+                break;
+            case 2:
+                printf("Media geral: %.2f\n", calcularMedia(turma, MAX));
+                break;
+            case 3: {
+                int mat, indice;
+                printf("Digite a matricula: ");
+                scanf("%d", &mat);
+                indice = buscarMatricula(turma, MAX, mat);
+                if (indice != -1)
+                    printf("Aluno encontrado: %s | Nota: %.1f\n",
+                           turma[indice].nome, turma[indice].nota);
+                else
+                    printf("Aluno nao encontrado.\n");
+                break;
+            }
+            case 4:
+                salvarArquivo(turma, MAX);
+                break;
+            case 5:
+                lerArquivo(turma, MAX);
+                break;
+            case 6:
+                printf("Sistema encerrado\n");
+                break;
+            default:
+                printf("Opcao invalida. Redigite\n");
+                break;
+        }
+        system("pause");
+    } while (opcao != 6);
+
+    return 0;
+}
