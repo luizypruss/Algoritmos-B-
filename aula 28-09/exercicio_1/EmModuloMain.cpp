@@ -1,12 +1,11 @@
 #include <iostream>
-#include "contador.h" // Importa o seu módulo criado!
+#include "contador.h" // módulo criado
 
 using namespace std;
 
 int main() {
     
-    // Testando a função que agora está em outro arquivo
-    contadorDeLetra("abacate", 'a');
+    contadorDeLetra("abacate", 'a'); // Testando a função no outro arquivo que criei chamado "contador.cpp"
 
     return 0;
 }
